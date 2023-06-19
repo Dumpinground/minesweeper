@@ -1,3 +1,6 @@
+mod components;
+mod resources;
+
 pub struct BoardPlugin;
 
 pub fn add(left: usize, right: usize) -> usize {
