@@ -1,1 +1,1 @@
-mod coordinates;
+pub mod coordinates;
