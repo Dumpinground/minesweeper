@@ -3,13 +3,10 @@ use std::{
     ops::{Add, Sub},
 };
 
-use bevy::prelude::Component;
-use bevy::reflect::Reflect;
+use bevy::{prelude::Component, reflect::Reflect};
 
 #[cfg(feature = "debug")]
-use bevy_inspector_egui::prelude::ReflectInspectorOptions;
-#[cfg(feature = "debug")]
-use bevy_inspector_egui::InspectorOptions;
+use bevy_inspector_egui::prelude::*;
 
 #[cfg_attr(feature = "debug", derive(Reflect, InspectorOptions))]
 #[cfg_attr(feature = "debug", reflect(InspectorOptions))]

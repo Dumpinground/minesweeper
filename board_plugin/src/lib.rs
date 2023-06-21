@@ -1,36 +1,29 @@
 pub mod components;
 pub mod resources;
 
-use bevy::prelude::*;
+use bevy::{log, prelude::*};
 use components::coordinates::Coordinates;
+use resources::tile_map::TileMap;
 
 pub struct BoardPlugin;
 
-impl Plugin for BoardPlugin {
-    fn build(&self, app: &mut App) {
-        app.add_startup_system(Self::create_board)
-        .register_type::<Coordinates>();
+impl Plugin for BoardPlugin {
+    fn build(&self, app: &mut App) {
+        app.add_startup_system(Self::create_board);
+
+        #[cfg(feature = "debug")]
+        app.register_type::<Coordinates>();
+
+        log::info!("Loaded Board Plugin");
     }
 }
 
-impl BoardPlugin {
-    /// System to generate the complete board
+impl BoardPlugin {
+    /// System to generate the complete board
     pub fn create_board() {
-        
-    }
-}
-
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
+        let mut tile_map = TileMap::empty(20, 20);
+        tile_map.set_bombs(40);
+        #[cfg(feature = "debug")]
+        log::info!("{}", tile_map.console_output());
     }
 }
