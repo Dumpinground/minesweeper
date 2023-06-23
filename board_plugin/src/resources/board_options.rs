@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 pub enum TileSize {
     /// Fixed tile size
     Fixed(f32),
-    /// Window adaptative tile size
+    /// Window adaptive tile size
     Adaptive { min: f32, max: f32 },
 }
 
@@ -61,7 +61,8 @@ impl Default for BoardOptions {
             bomb_count: 30,
             tile_padding: 0.,
             safe_start: false,
-            ..default()
+            position: Default::default(),
+            tile_size: Default::default()
         }
     }
 }

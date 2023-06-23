@@ -19,6 +19,7 @@ fn main() {
 
     #[cfg(feature = "debug")]
     app.add_plugin(WorldInspectorPlugin::new());
+
     // Board Plugin Options
     app.insert_resource(BoardOptions {
         map_size: (20, 20),
@@ -27,9 +28,11 @@ fn main() {
         ..default()
     });
 
+    // Board Plugin
     app.add_plugin(BoardPlugin);
     // Startup system (cameras)
     app.add_startup_system(camera_setup);
+
     // Run the app
     app.run();
 }

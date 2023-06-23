@@ -42,7 +42,7 @@ impl BoardPlugin {
 
         let tile_size = match options.tile_size {
             TileSize::Fixed(v) => v,
-            TileSize::Adaptive { min, max } => Self::adaptative_tile_size(
+            TileSize::Adaptive { min, max } => Self::adaptive_tile_size(
                 window,
                 (min, max),
                 (tile_map.width(), tile_map.height()),
@@ -61,9 +61,17 @@ impl BoardPlugin {
             }
             BoardPosition::Custom(p) => p,
         };
+
+        // TODO refactor this (This will move into a resource in a following chapter)
+
+        commands.spawn(SpatialBundle {
+            visibility: Visibility::Visible,
+            transform: Transform::from_translation(board_position),
+            ..default()
+        }).insert(Name::new("Board"));
     }
 
-    fn adaptative_tile_size(
+    fn adaptive_tile_size(
         window: &Window,
         (min, max): (f32, f32),
         (width, height): (u16, u16),
