@@ -1,3 +1,5 @@
 {
-    "rust-analyzer.check.features": [ "debug" ]
+    "rust-analyzer.cargo.features": [
+        "debug"
+    ]
 }
