@@ -13,10 +13,10 @@ opt-level = 3
 
 [features]
 default = [ ]
-debug = [ "board_plugin/debug", "bevy-inspector-egui" ]
+debug = [ "board_plugin/debug", "bevy-inspector-egui", "bevy/dynamic_linking" ]
 
 [dependencies]
-bevy = { version = "0.10", features = ["dynamic_linking"] }
+bevy = "0.10"
 board_plugin = { path = "board_plugin" }
 bevy-inspector-egui = { version = "0.18", optional = true }
 
