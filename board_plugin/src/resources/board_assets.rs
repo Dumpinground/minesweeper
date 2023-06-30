@@ -6,8 +6,10 @@ pub struct SpriteMaterial {
 }
 
 impl Default for SpriteMaterial {
-    fn default() -> Self {
-        Self { color: Color::WHITE, texture: DEFAULT_IMAGE_HANDLE }
+    fn default() -> Self {
+
+        Self { color: Color::WHITE, texture: DEFAULT_IMAGE_HANDLE }
+
     }
 }
 
@@ -22,7 +24,8 @@ pub struct BoardAssets {
     pub bomb_material: SpriteMaterial,
 }
 
-impl BoardAssets {
+impl BoardAssets {
+
     pub fn default_colors() -> Vec<Color> {
         vec![
             Color::WHITE,
@@ -35,10 +38,12 @@ impl BoardAssets {
 
     pub fn bomb_counter_color(&self, counter: u8) -> Color {
         let counter = counter.saturating_sub(1) as usize;
-        match self.bomb_counter_colors.get(counter) {
-            Some(c) => *c
-            None => match self.bomb_counter_colors.last() {
-                None => Color::WHITE
+        match self.bomb_counter_colors.get(counter) {
+
+            Some(c) => *c,
+            None => match self.bomb_counter_colors.last() {
+
+                None => Color::WHITE,
                 Some(c) => *c
             }
         }
