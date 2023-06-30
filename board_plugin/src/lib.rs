@@ -42,11 +42,9 @@ impl BoardPlugin {
 
         let tile_size = match options.tile_size {
             TileSize::Fixed(v) => v,
-            TileSize::Adaptive { min, max } => Self::adaptive_tile_size(
-                window,
-                (min, max),
-                (tile_map.width(), tile_map.height()),
-            ),
+            TileSize::Adaptive { min, max } => {
+                Self::adaptive_tile_size(window, (min, max), (tile_map.width(), tile_map.height()))
+            }
         };
 
         let board_size = Vec2::new(
@@ -64,11 +62,26 @@ impl BoardPlugin {
 
         // TODO refactor this (This will move into a resource in a following chapter)
 
-        commands.spawn(SpatialBundle {
-            visibility: Visibility::Visible,
-            transform: Transform::from_translation(board_position),
-            ..default()
-        }).insert(Name::new("Board"));
+        commands
+            .spawn(SpatialBundle {
+                visibility: Visibility::Visible,
+                transform: Transform::from_translation(board_position),
+                ..default()
+            })
+            .insert(Name::new("Board"))
+            .with_children(|parent| {
+                parent
+                    .spawn(SpriteBundle {
+                        sprite: Sprite {
+                            color: Color::WHITE,
+                            custom_size: Some(board_size),
+                            ..default()
+                        },
+                        transform: Transform::from_xyz(board_size.x / 2., board_size.y / 2., 0.),
+                        ..default()
+                    })
+                    .insert(Name::new("Background"));
+            });
     }
 
     fn adaptive_tile_size(
