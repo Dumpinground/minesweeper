@@ -1,7 +1,7 @@
 pub mod components;
 pub mod resources;
 
-use bevy::{log, prelude::*};
+use bevy::{log, prelude::*, utils::HashMap};
 use components::coordinates::Coordinates;
 use resources::{tile_map::TileMap, BoardOptions, BoardPosition, TileSize};
 
@@ -42,11 +42,9 @@ impl BoardPlugin {
 
         let tile_size = match options.tile_size {
             TileSize::Fixed(v) => v,
-            TileSize::Adaptive { min, max } => Self::adaptive_tile_size(
-                window,
-                (min, max),
-                (tile_map.width(), tile_map.height()),
-            ),
+            TileSize::Adaptive { min, max } => {
+                Self::adaptive_tile_size(window, (min, max), (tile_map.width(), tile_map.height()))
+            }
         };
 
         let board_size = Vec2::new(
@@ -55,6 +53,7 @@ impl BoardPlugin {
         );
         log::info!("board size: {}", board_size);
 
+        // We define the board anchor position (bottom left)
         let board_position = match options.position {
             BoardPosition::Centered { offset } => {
                 Vec3::new(-(board_size.x / 2.), -(board_size.y / 2.), 0.) + offset
@@ -63,12 +62,44 @@ impl BoardPlugin {
         };
 
         // TODO refactor this (This will move into a resource in a following chapter)
+        let mut covered_tiled =
+            HashMap::with_capacity((tile_map.width() * tile_map.height()).into());
+        let mut safe_start = None;
+        let board_entity = commands
+            .spawn(GlobalTransform::default())
+            .insert(Name::new("Board"))
+            .insert(Transform::from_translation(board_position))
+            .with_children(|parent| {
+                parent
+                    .spawn(SpriteBundle {
+                        sprite: Sprite {
+                            custom_size: Some(board_size),
+                            ..default()
+                        },
+                        ..default()
+                    })
+                    .insert(Name::new("Background"));
+                // Self::spawn
+            });
 
-        commands.spawn(SpatialBundle {
-            visibility: Visibility::Visible,
-            transform: Transform::from_translation(board_position),
-            ..default()
-        }).insert(Name::new("Board"));
+        commands
+            .spawn(SpatialBundle {
+                visibility: Visibility::Visible,
+                transform: Transform::from_translation(board_position),
+                ..default()
+            })
+            .insert(Name::new("Board"));
+    }
+
+    fn spawn_tiles(
+        parent: &mut ChildBuilder,
+        tile_map: &TileMap,
+        size: f32,
+        padding: f32,
+        board_assets: Res,
+        covered_tiles: &mut HashMap<Coordinates, Entity>,
+        safe_start_entity: &mut Option<Entity>,
+    ) {
     }
 
     fn adaptive_tile_size(
