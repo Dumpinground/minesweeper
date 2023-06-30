@@ -1,3 +1,5 @@
-[[proxy]]
-rewrite = "/mine"
-backend = "http://192.168.2.5:8081/"
+[serve]
+# The address to serve on.
+address = "0.0.0.0"
+# The port to serve on.
+port = 8080

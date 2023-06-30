@@ -1,7 +1,7 @@
 pub mod components;
 pub mod resources;
 
-use bevy::{log, prelude::*};
+use bevy::{log, prelude::*, utils::HashMap};
 use components::coordinates::Coordinates;
 use resources::{tile_map::TileMap, BoardOptions, BoardPosition, TileSize};
 
@@ -24,6 +24,8 @@ impl BoardPlugin {
         mut commands: Commands,
         board_options: Option<Res<BoardOptions>>,
         mut windows: Query<&mut Window>,
+        mut materials: ResMut<Assets<ColorMaterial>>,
+        asset_server: Res<AssetServer>
     ) {
         let window = windows.single();
 
@@ -53,6 +55,7 @@ impl BoardPlugin {
         );
         log::info!("board size: {}", board_size);
 
+        // We define the board anchor position (bottom left)
         let board_position = match options.position {
             BoardPosition::Centered { offset } => {
                 Vec3::new(-(board_size.x / 2.), -(board_size.y / 2.), 0.) + offset
@@ -61,6 +64,10 @@ impl BoardPlugin {
         };
 
         // TODO refactor this (This will move into a resource in a following chapter)
+        let board_material = materials.add(Color::WHITE.into());
+        let tile_material = materials.add(Color::GRAY.into());
+        // let font = asset_server.load("fonts/minecraft.ttf");
+        let bomb_material = materials.add(asset_server.load("sprites/bomb.png").into());
 
         commands
             .spawn(SpatialBundle {
@@ -70,18 +77,67 @@ impl BoardPlugin {
             })
             .insert(Name::new("Board"))
             .with_children(|parent| {
-                parent
-                    .spawn(SpriteBundle {
-                        sprite: Sprite {
-                            color: Color::WHITE,
-                            custom_size: Some(board_size),
-                            ..default()
-                        },
-                        transform: Transform::from_xyz(board_size.x / 2., board_size.y / 2., 0.),
+                parent.spawn(SpriteBundle {
+                    sprite: Sprite {
+                        color: Color::WHITE,
+                        custom_size: Some(board_size),
                         ..default()
-                    })
-                    .insert(Name::new("Background"));
+                    },
+                    transform: Transform::from_xyz(board_size.x / 2., board_size.y / 2., 0.),
+                    ..default()
+                }).insert(Name::new("Background"));
             });
+    }
+
+    fn spawn_tiles(
+        parent: &mut ChildBuilder,
+        tile_map: &TileMap,
+        size: f32,
+        padding: f32,
+        material: Handle<ColorMaterial>,
+        bomb_material: Handle<ColorMaterial>,
+        font: Handle<Font>
+    ) {
+        for (y, line) in tile_map.iter().enumerate() {
+            for (x, tile) in line.iter().enumerate() {
+                parent.spawn(SpriteBundle {
+                    sprite: Sprite {
+                        color: Color::GRAY,
+                        custom_size: Some(Vec2::splat(size - padding)),
+                        ..default()
+                    },
+                    transform: Transform::from_xyz((x as f32 * size) + (size / 2.), (y as f32 * size) + (size / 2.), 1.),
+                    ..default()
+                }).insert(Name::new(format!("Tile ({}, {})", x, y))).insert(Coordinates {
+                    x: x as u16, y: y as u16
+                });
+            }
+        }
+    }
+
+    /// Generates the bomb counter text 2D Bundle for a given value
+    fn bomb_count_text_bundle(count: u8, font: Handle<Font>, size: f32) -> Text2dBundle {
+        let (text, color) = (
+            count.to_string(),
+            match count {
+                1 => Color::WHITE,
+                2 => Color::GREEN,
+                3 => Color::YELLOW,
+                4 => Color::ORANGE,
+                _ => Color::PURPLE,
+            }
+        );
+
+        Text2dBundle {
+            text: Text { sections: vec![TextSection {
+                value: text,
+                style: TextStyle {
+                    color, font, font_size: size
+                },
+            }], alignment: TextAlignment::Center, ..default() },
+            transform: Transform::from_xyz(0., 0., 1.),
+            ..default()
+        }
     }
 
     fn adaptive_tile_size(
