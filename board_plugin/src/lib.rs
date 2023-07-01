@@ -2,7 +2,7 @@ pub mod components;
 pub mod resources;
 
 use bevy::{log, prelude::*, utils::HashMap};
-use components::coordinates::Coordinates;
+use components::*;
 use resources::{tile_map::TileMap, BoardOptions, BoardPosition, TileSize};
 
 pub struct BoardPlugin;
@@ -12,7 +12,10 @@ impl Plugin for BoardPlugin {
         app.add_startup_system(Self::create_board);
 
         #[cfg(feature = "debug")]
-        app.register_type::<Coordinates>();
+        app.register_type::<Coordinates>()
+        .register_type::<BombNeighbor>()
+        .register_type::<Bomb>()
+        .register_type::<Uncover>();
 
         log::info!("Loaded Board Plugin");
     }
@@ -66,8 +69,8 @@ impl BoardPlugin {
         // TODO refactor this (This will move into a resource in a following chapter)
         let board_material = materials.add(Color::WHITE.into());
         let tile_material = materials.add(Color::GRAY.into());
-        // let font = asset_server.load("fonts/minecraft.ttf");
-        let bomb_material = materials.add(asset_server.load("sprites/bomb.png").into());
+        let font = asset_server.load("fonts/pixeled.ttf");
+        let bomb_image = asset_server.load("sprites/bomb.png");
 
         commands
             .spawn(SpatialBundle {
