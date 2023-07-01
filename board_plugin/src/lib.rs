@@ -69,7 +69,7 @@ impl BoardPlugin {
         // TODO refactor this (This will move into a resource in a following chapter)
         let board_material = materials.add(Color::WHITE.into());
         let tile_material = materials.add(Color::GRAY.into());
-        let font = asset_server.load("fonts/pixeled.ttf");
+        let font = asset_server.load("fonts/minecraft.ttf");
         let bomb_image = asset_server.load("sprites/bomb.png");
 
         commands
@@ -118,29 +118,29 @@ impl BoardPlugin {
                     x: x as u16, y: y as u16
                 });
 
-                match tile {
-                    // If the tile is a bomb we add the matching component and a sprite child
-                    Tile::Bomb => {
-                        parent.spawn(Bomb).with_children(|parent| {
-                            parent.spawn(SpriteBundle {
-                                sprite: Sprite {
-                                    custom_size: Some(Vec2::splat(size - padding)),
-                                    ..default()
-                                },
-                                transform: Transform::from_xyz(0., 0., 1.),
-                                texture: bomb_image.clone(),
-                                ..default()
-                            });
-                        });
-                    }
-                    // If the tile is a bomb neighbor we add the matching component and a text child
-                    Tile::BombNeighbor(v) => {
-                        parent.spawn(BombNeighbor { count: *v }).with_children(|parent| {
-                            parent.spawn(Self::bomb_count_text_bundle(*v, font.clone(), size - padding));
-                        });
-                    }
-                    Tile::Empty => (),
-                }
+                // match tile {
+                //     // If the tile is a bomb we add the matching component and a sprite child
+                //     Tile::Bomb => {
+                //         parent.spawn(Bomb).with_children(|parent| {
+                //             parent.spawn(SpriteBundle {
+                //                 sprite: Sprite {
+                //                     custom_size: Some(Vec2::splat(size - padding)),
+                //                     ..default()
+                //                 },
+                //                 transform: Transform::from_xyz(0., 0., 1.),
+                //                 texture: bomb_image.clone(),
+                //                 ..default()
+                //             });
+                //         });
+                //     }
+                //     // If the tile is a bomb neighbor we add the matching component and a text child
+                //     Tile::BombNeighbor(v) => {
+                //         parent.spawn(BombNeighbor { count: *v }).with_children(|parent| {
+                //             parent.spawn(Self::bomb_count_text_bundle(*v, font.clone(), size - padding));
+                //         });
+                //     }
+                //     Tile::Empty => (),
+                // }
             }
         }
     }
