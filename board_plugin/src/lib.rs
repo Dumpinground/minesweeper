@@ -1,9 +1,9 @@
 pub mod components;
 pub mod resources;
 
-use bevy::{log, prelude::*, utils::HashMap};
+use bevy::{log, prelude::*};
 use components::*;
-use resources::{tile_map::TileMap, BoardOptions, BoardPosition, TileSize};
+use resources::{tile_map::TileMap, BoardOptions, BoardPosition, TileSize, tile::Tile};
 
 pub struct BoardPlugin;
 
@@ -89,6 +89,8 @@ impl BoardPlugin {
                     transform: Transform::from_xyz(board_size.x / 2., board_size.y / 2., 0.),
                     ..default()
                 }).insert(Name::new("Background"));
+
+                Self::spawn_tiles(parent, &tile_map, tile_size, options.tile_padding, tile_material, bomb_image, font)
             });
     }
 
@@ -98,11 +100,12 @@ impl BoardPlugin {
         size: f32,
         padding: f32,
         material: Handle<ColorMaterial>,
-        bomb_material: Handle<ColorMaterial>,
+        bomb_image: Handle<Image>,
         font: Handle<Font>
     ) {
         for (y, line) in tile_map.iter().enumerate() {
             for (x, tile) in line.iter().enumerate() {
+                
                 parent.spawn(SpriteBundle {
                     sprite: Sprite {
                         color: Color::GRAY,
@@ -114,6 +117,30 @@ impl BoardPlugin {
                 }).insert(Name::new(format!("Tile ({}, {})", x, y))).insert(Coordinates {
                     x: x as u16, y: y as u16
                 });
+
+                match tile {
+                    // If the tile is a bomb we add the matching component and a sprite child
+                    Tile::Bomb => {
+                        parent.spawn(Bomb).with_children(|parent| {
+                            parent.spawn(SpriteBundle {
+                                sprite: Sprite {
+                                    custom_size: Some(Vec2::splat(size - padding)),
+                                    ..default()
+                                },
+                                transform: Transform::from_xyz(0., 0., 1.),
+                                texture: bomb_image.clone(),
+                                ..default()
+                            });
+                        });
+                    }
+                    // If the tile is a bomb neighbor we add the matching component and a text child
+                    Tile::BombNeighbor(v) => {
+                        parent.spawn(BombNeighbor { count: *v }).with_children(|parent| {
+                            parent.spawn(Self::bomb_count_text_bundle(*v, font.clone(), size - padding));
+                        });
+                    }
+                    Tile::Empty => (),
+                }
             }
         }
     }

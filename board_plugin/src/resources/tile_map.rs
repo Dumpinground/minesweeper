@@ -2,7 +2,7 @@ use std::ops::{Deref, DerefMut};
 
 use rand::{thread_rng, Rng};
 
-use super::super::components::coordinates::Coordinates;
+use super::super::components::Coordinates;
 use super::tile::Tile;
 
 /// Delta coordinates for all 8 square neighbors
