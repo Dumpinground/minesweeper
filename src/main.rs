@@ -18,7 +18,7 @@ fn main() {
     }));
 
     #[cfg(feature = "debug")]
-    app.add_plugin(WorldInspectorPlugin::new());
+    app.add_plugins(WorldInspectorPlugin::new());
 
     // Board Plugin Options
     app.insert_resource(BoardOptions {
@@ -29,9 +29,9 @@ fn main() {
     });
 
     // Board Plugin
-    app.add_plugin(BoardPlugin);
+    app.add_plugins(BoardPlugin);
     // Startup system (cameras)
-    app.add_startup_system(camera_setup);
+    app.add_systems(Startup, camera_setup);
 
     // Run the app
     app.run();

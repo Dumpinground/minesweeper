@@ -38,7 +38,6 @@ impl TileMap {
     /// Generates an empty map
     pub fn empty(width: u16, height: u16) -> Self {
         let map = (0..height)
-            .into_iter()
             .map(|_| (0..width).into_iter().map(|_| Tile::Empty).collect())
             .collect();
         Self {
@@ -55,7 +54,7 @@ impl TileMap {
             "Map ({}, {}) with {} bombs:\n",
             self.width, self.height, self.bomb_count
         );
-        let line: String = (0..=(self.width + 1)).into_iter().map(|_| '-').collect();
+        let line: String = (0..=(self.width + 1)).map(|_| '-').collect();
         buffer = format!("{}{}\n", buffer, line);
         for line in self.map.iter().rev() {
             buffer = format!("{}|", buffer);

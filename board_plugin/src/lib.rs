@@ -9,7 +9,7 @@ pub struct BoardPlugin;
 
 impl Plugin for BoardPlugin {
     fn build(&self, app: &mut App) {
-        app.add_startup_system(Self::create_board);
+        app.add_systems(Startup, Self::create_board);
 
         #[cfg(feature = "debug")]
         app.register_type::<Coordinates>()
@@ -26,7 +26,7 @@ impl BoardPlugin {
     pub fn create_board(
         mut commands: Commands,
         board_options: Option<Res<BoardOptions>>,
-        mut windows: Query<&mut Window>,
+        windows: Query<&mut Window>,
         mut materials: ResMut<Assets<ColorMaterial>>,
         asset_server: Res<AssetServer>
     ) {
