@@ -10,10 +10,10 @@ default = []
 debug = ["colored", "bevy-inspector-egui"]
 
 [dependencies]
-bevy = "0.10"
+bevy = "0.11"
 serde = "*"
 rand = "*"
 
 colored = { version = "*", optional = true }
 
-bevy-inspector-egui = { version = "0.18", optional = true }
+bevy-inspector-egui = { version = "0.20", optional = true }
