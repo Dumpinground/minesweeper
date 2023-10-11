@@ -38,7 +38,7 @@ impl TileMap {
     /// Generates an empty map
     pub fn empty(width: u16, height: u16) -> Self {
         let map = (0..height)
-            .map(|_| (0..width).into_iter().map(|_| Tile::Empty).collect())
+            .map(|_| (0..width).map(|_| Tile::Empty).collect())
             .collect();
         Self {
             bomb_count: 0,
